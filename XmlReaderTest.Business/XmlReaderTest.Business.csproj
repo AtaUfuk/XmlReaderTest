@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="XmlHelper.cs~RF1efd336.TMP" />
+  </ItemGroup>
+
 </Project>
