@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using XmlReaderTest.Business;
 using XmlReaderTest.UI.Models.NumberToDollar;
 // See https://aka.ms/new-console-template for more information
@@ -39,10 +41,15 @@ string GetResultProxy(string input)
     {
         Address = new Uri("https://192.168.1.1:3131")
     };
-    HttpClientHandler clientHandler = new();
-    clientHandler.Proxy = proxy;
-    clientHandler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-    clientHandler.AllowAutoRedirect = true;
+    HttpClientHandler clientHandler = new()
+    {
+        Proxy = proxy,
+        AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
+        AllowAutoRedirect = true,
+        ClientCertificateOptions = ClientCertificateOption.Manual,
+        SslProtocols = SslProtocols.Tls12
+    };
+    clientHandler.ClientCertificates.Add(new X509Certificate2("cert.crt"));
     var result = xmlHelper.GetXmlResponseWithProxy<Envelope, ResponseEnvelope>(envelope, "https://www.dataaccess.com/webservicesserver/NumberConversion.wso?op=NumberToDollars", HttpMethod.Post, System.Text.Encoding.UTF8, clientHandler, data);
 
     return result.Body.NumberToDollarsResponse.NumberToDollarsResult;
